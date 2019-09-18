@@ -5,6 +5,9 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 import pickle
 
+show_video = False
+save_annotations = True
+
 dataset_global = []
 test_train_ratio = 0.2
 dataset_path = 'samples'
@@ -26,7 +29,6 @@ for points in points_pairs_to_check:
     pt2_idx = point_names.index(points[1])
     points_pairs_to_check_idxs.append([pt1_idx, pt2_idx])
 
-show_video = False
 if show_video:
     cv2.namedWindow("output", cv2.WINDOW_NORMAL)
     font = cv2.FONT_HERSHEY_SIMPLEX
@@ -143,14 +145,15 @@ for i in range(10):
         cap.release()
         cv2.destroyAllWindows()
 
-with open('{}data_global.pkl'.format(path_to_save), 'wb') as f:
-    pickle.dump(dataset_global, f)
+if save_annotations:
+    with open('{}data_global.pkl'.format(path_to_save), 'wb') as f:
+        pickle.dump(dataset_global, f)
 
-dataset_train, dataset_val = train_test_split(
-    dataset_global, test_size=test_train_ratio, random_state=42, shuffle=True)
+    dataset_train, dataset_val = train_test_split(
+        dataset_global, test_size=test_train_ratio, random_state=42, shuffle=True)
 
-with open('{}data_train.pkl'.format(path_to_save), 'wb') as f:
-    pickle.dump(dataset_train, f)
+    with open('{}data_train.pkl'.format(path_to_save), 'wb') as f:
+        pickle.dump(dataset_train, f)
 
-with open('{}data_val.pkl'.format(path_to_save), 'wb') as f:
-    pickle.dump(dataset_val, f)
+    with open('{}data_val.pkl'.format(path_to_save), 'wb') as f:
+        pickle.dump(dataset_val, f)
