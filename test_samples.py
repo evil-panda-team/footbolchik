@@ -13,7 +13,8 @@ test_train_ratio = 0.2
 dataset_path = 'samples'
 path_to_save = 'annotations/'
 
-CLASSES = ['Pb4 L', 'Pb3 L', 'C2 C', 'C1 C', 'Pb4 R', 'Pb3 R']
+CLASSES = ['F L', 'Pb4 L', 'Pb3 L', 'Cf C', 'C2 C',
+           'C1 C', 'Cn C', 'Pb4 R', 'Pb3 R', 'F R']
 point_names = ['Co C', 'C1 C', 'C2 C', 'Cf C', 'Cn C', 'F L', 'N L',
                'Pp L', 'Pb1 L', 'Pb2 L', 'Pb3 L', 'Pb4 L', 'Pb5 L',
                'Pb6 L', 'Gb1 L', 'Gb2 L', 'Gb3 L', 'Gb4 L', 'F R',
@@ -32,6 +33,15 @@ for points in points_pairs_to_check:
 if show_video:
     cv2.namedWindow("output", cv2.WINDOW_NORMAL)
     font = cv2.FONT_HERSHEY_SIMPLEX
+
+fontScale = 1
+fontColor = (255, 255, 255)
+lineType = 2
+
+bbox_w = 25
+bbox_h = 25
+
+scale = 1
 
 w = 1920
 h = 1080
@@ -57,15 +67,6 @@ for i in range(10):
         points_list = [line.split(',') for line in f]
 
     reference_sizes = []
-
-    fontScale = 1
-    fontColor = (255, 255, 255)
-    lineType = 2
-
-    bbox_w = 25
-    bbox_h = 25
-
-    scale = 1
 
     for frame_number in range(len(points_list)):
         if sample_number == 1:
