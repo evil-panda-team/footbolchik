@@ -35,17 +35,19 @@ if show_video:
 
 w = 1920
 h = 1080
+no_point_counter = 0
 for i in range(10):
     sample_number = i+1
     if sample_number == 10:
         video_file_name = 'video_010.mp4'
         log_file_name = 'log_010.csv'
+        annotations_folder = '010'
     elif sample_number == 5:
         continue
     else:
         video_file_name = 'video_00{}.mp4'.format(sample_number)
         log_file_name = 'log_00{}.csv'.format(sample_number)
-    annotations_folder = '00{}'.format(sample_number)
+        annotations_folder = '00{}'.format(sample_number)
     if show_video:
         cap = cv2.VideoCapture(os.path.join(dataset_path, video_file_name))
         if (cap.isOpened() == False):
@@ -66,6 +68,9 @@ for i in range(10):
     scale = 1
 
     for frame_number in range(len(points_list)):
+        if sample_number == 1:
+            if frame_number > 4320:
+                break
         if frame_number == 0:
             continue
         if show_video:
@@ -81,6 +86,8 @@ for i in range(10):
                     sum([(int(a) - int(b)) ** 2 for a, b in zip(pt1, pt2)]))
                 reference_sizes.append(distance)
             print(reference_sizes)
+        elif frame_number < 150 and frame_number > 1:
+            continue
         else:
             for idx, points_idxs in enumerate(points_pairs_to_check_idxs):
                 if coord_points[points_idxs[0]][0] != '' and coord_points[points_idxs[1]][0] != '':
@@ -94,7 +101,7 @@ for i in range(10):
         labels = []
         bboxes_ignore = np.zeros((0, 4))
         labels_ignore = np.zeros((0, ))
-
+        no_point = True
         # draw field points
         for idx, point in enumerate(coord_points):
             if point[0] != '':
@@ -105,14 +112,16 @@ for i in range(10):
                 y2 = int(y + scale*bbox_h/2)
                 if point_names[idx] in CLASSES:
                     bboxes.append([x1, y1, x2, y2])
-                    labels.append(CLASSES.index(point_names[idx]))
+                    labels.append(CLASSES.index(point_names[idx])+1)
+                    no_point = False
                 if show_video:
                     cv2.rectangle(frame, (x1, y1), (x2, y2), (255, 0, 0), 2)
                     cv2.putText(frame, point_names[idx],
                                 (int(point[0]), int(point[1])),
                                 cv2.FONT_HERSHEY_SIMPLEX,
                                 1, (255, 255, 255), 2)
-
+        if no_point:
+            no_point_counter += 1
         if not bboxes:
             bboxes = np.zeros((0, 4))
             labels = np.zeros((0, ))
@@ -145,6 +154,7 @@ for i in range(10):
         cap.release()
         cv2.destroyAllWindows()
 
+print(no_point_counter)
 if save_annotations:
     with open('{}data_global.pkl'.format(path_to_save), 'wb') as f:
         pickle.dump(dataset_global, f)
