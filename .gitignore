@@ -1,3 +1,4 @@
 samples/
 annotations/
 annotations/*
+predictions/*
